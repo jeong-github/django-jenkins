@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Chan Instagram</title>
+</head>
+<body>
+    <h2>Recent Posts</h2>
+    <div class="post-list">
+        {% for feed in posts %}
+        <div class="feed">
+            <p>{{ feed.content }}</p>
+            <img src="{{ feed.image }}" alt="Post image" style="max-width: 300px; height: auto;">
+            <p>Profile Image: <img src="{{ feed.profile_image }}" alt="Profile image" style="max-width: 50px; height: auto;"></p>
+            <p>User: {{ feed.user_id }}</p>
+            <p>Likes: {{ feed.like_count }}</p>
+            <small>Posted on: {{ feed.created_at }}</small>
+        </div>
+        {% empty %}
+        <p>No posts available.</p>
+        {% endfor %}
+    </div>
+</body>
+</html>
