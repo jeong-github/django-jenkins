@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: django-code-pv
+spec:
+  storageClassName: manual
+  capacity:
+    storage: 1Gi
+  accessModes:
+    - ReadWriteMany
+  hostPath:
+    path: "/data/django-code"   # 호스트에 저장될 경로
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: django-code-pvc
+  namespace: django-app
+spec:
+  storageClassName: manual
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 1Gi
+  volumeName: django-code-pv
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: django-app-deploy
+  namespace: django-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: django-application
+  template:
+    metadata:
+      labels:
+        app: django-application
+    spec:
+      containers:
+        - name: django-app-container
+          image: jeonghyuck/chan-django:4
+          imagePullPolicy: Always
+          envFrom:
+            - configMapRef:
+                name: app-cm
+          ports:
+            - containerPort: 8000
+          volumeMounts:
+            - mountPath: "/data/static"
+              name: staticfiles
+            - mountPath: "/code"            # Django 소스 코드 경로
+              name: django-code
+          command: ["/bin/sh"]
+          args: ["-c", "python manage.py runserver 0.0.0.0:8000"]
+          #args: ["-c", "python manage.py makemigrations content && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
+      volumes:
+        - name: staticfiles
+          persistentVolumeClaim:
+            claimName: staticfiles-pvc
+        - name: django-code
+          persistentVolumeClaim:
+            claimName: django-code-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: app-service
+  namespace: django-app
+  labels:
+    app: app-svc
+spec:
+  type: NodePort
+  ports:
+    - port: 8000
+      targetPort: 8000
+      nodePort: 30080
+  selector:
+    app: django-application
+
