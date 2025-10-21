@@ -56,11 +56,13 @@ spec:
           volumeMounts:
             - mountPath: "/data/static"
               name: staticfiles
-            - mountPath: "/code"            # Django 소스 코드 경로
+            - mountPath: "/code"                                 # Django 소스 코드 경로
               name: django-code
+            - mountPath: "/code/templates/chanDjango/main.html"  # Mount main.html
+              name: django-templates-volume
+              subPath: main.html                            
           command: ["/bin/sh"]
           args: ["-c", "python manage.py runserver 0.0.0.0:8000"]
-          #args: ["-c", "python manage.py makemigrations content && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
       volumes:
         - name: staticfiles
           persistentVolumeClaim:
@@ -68,6 +70,10 @@ spec:
         - name: django-code
           persistentVolumeClaim:
             claimName: django-code-pvc
+        - name: django-templates-volume
+          configMap:
+            name: django-templates  # The name of the ConfigMap containing main.html
+
 ---
 apiVersion: v1
 kind: Service
