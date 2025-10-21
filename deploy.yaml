@@ -43,7 +43,7 @@ spec:
         app: django-application
     spec:
       nodeSelector:
-        kubernetes.io/hostname: worker01  
+        kubernetes.io/hostname: worker02
       containers:
         - name: django-app-container
           image: jeonghyuck/chan-django:4
