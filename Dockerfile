@@ -24,8 +24,6 @@ RUN pip install --no-cache-dir -r requirements.txt
 # 애플리케이션 코드 복사
 COPY chanDjango /code/
 
-# 데이터베이스 마이그레이션
-#RUN python manage.py migrate
 
 # 서버 실행
 EXPOSE 8000
