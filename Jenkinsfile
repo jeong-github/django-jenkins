@@ -41,6 +41,35 @@ pipeline {
             }
         }
 
+        stage('Update deploy.yaml') {
+            steps {
+                script {
+                    // deploy.yaml에서 image 버전을 업데이트
+                    echo "Updating deploy.yaml with the new image version"
+
+                    //image 버전 부분을 $IMAGE_TAG로 변경
+                    sh """
+                    sed -i 's|image: $REPOSITORY:.*|image: $REPOSITORY:$IMAGE_TAG|' deploy.yaml
+                    """
+                }
+            }
+        }
+
+        stage('Commit and Push deploy.yaml') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: 'git-jenkins', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
+                        sh ''' 
+                        git config user.email "jch951753@gmail.com"
+                        git config user.name "jeong"
+                        git add deploy.yaml
+                        git commit -m "Update image tag to $REPOSITORY:$IMAGE_TAG"
+                        git push https://${GIT_USER}:${GIT_TOKEN}@github.com/jeong-github/django-jenkins.git
+                        '''
+                    }
+                }
+            }
+        }
 
 
 
