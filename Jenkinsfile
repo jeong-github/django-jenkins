@@ -60,11 +60,13 @@ pipeline {
                 script {
                     withCredentials([usernamePassword(credentialsId: 'git-jenkins', usernameVariable: 'GIT_USER', passwordVariable: 'GIT_TOKEN')]) {
                         sh ''' 
+                        git checkout main
+
                         git config user.email "jch951753@gmail.com"
                         git config user.name "jeong"
                         git add deploy.yaml
                         git commit -m "Update image tag to $REPOSITORY:$IMAGE_TAG"
-                        git push https://${GIT_USER}:${GIT_TOKEN}@github.com/jeong-github/django-jenkins.git
+                        git push https://${GIT_USER}:${GIT_TOKEN}@github.com/jeong-github/django-jenkins.git main
                         '''
                     }
                 }
