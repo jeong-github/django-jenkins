@@ -58,9 +58,6 @@ spec:
               name: staticfiles
             - mountPath: "/code"            # Django 소스 코드 경로
               name: django-code
-          command: ["/bin/sh"]
-          args: ["-c", "python manage.py runserver 0.0.0.0:8000"]
-          #args: ["-c", "python manage.py makemigrations content && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
       volumes:
         - name: staticfiles
           persistentVolumeClaim:
