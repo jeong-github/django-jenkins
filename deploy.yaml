@@ -46,7 +46,7 @@ spec:
         kubernetes.io/hostname: worker02
       containers:
         - name: django-app-container
-          image: jeonghyuck/chan-django:5
+          image: jeonghyuck/chan-django:7
           imagePullPolicy: Always
           envFrom:
             - configMapRef:
